@@ -3,7 +3,7 @@ const users = {
 	"alex.cancian": "pirelli123",
 	"carlos.buzatto": "pirelli123",
 	"mayara.ferreira": "pirelli123",
-	"giovanna.meyer": "pirelli123"
+	"giovanna.meyer": "pirelli123",
     "guilhermesilva.santos@campneus.com.br": "TTPfbz861",
     "rosane.monteiro@campneus.com.br": "PLZhss605",
     "fernanda.teruel@campneus.com.br": "LWUmkl789",
