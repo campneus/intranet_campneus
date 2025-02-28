@@ -6,7 +6,7 @@ const users = {
 	"giovanna.meyer": "pirelli123",
 	"damares": "pirelli123",
 	"rodrigo.silveira": "pirelli123",
-	"renata": "pirelli123",
+	"renata.martins": "pirelli123",
     "guilhermesilva.santos@campneus.com.br": "TTPfbz861",
     "rosane.monteiro@campneus.com.br": "PLZhss605",
     "fernanda.teruel@campneus.com.br": "LWUmkl789",
