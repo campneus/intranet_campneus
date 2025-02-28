@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intranet - Campneus</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>Intranet - Campneus</h1> <!-- Título fixo no topo -->
+
+    <div class="container" id="loginContainer">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Usuário">
+        <input type="password" id="password" placeholder="Senha">
+        <button id="loginButton">Entrar</button>
+        <p id="error" style="color: red;"></p>
+    </div>
+
+    <div id="welcomeContainer">
+        <iframe id="dashboardFrame" title="Painel Gerencial - Campneus Varejo" src="" allowFullScreen="true"></iframe>
+        <button id="logoutButton" class="hidden" onclick="logout()">Sair</button>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
