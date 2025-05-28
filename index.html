@@ -5,25 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intranet - Campneus</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="background-overlay"></div>
 
-    <h1>Intranet - Campneus</h1> <!-- Título fixo no topo -->
+    <div class="logo-container">
+        <h1>Intranet - Campneus</h1>
+    </div>
 
     <div class="container" id="loginContainer">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Usuário">
-        <input type="password" id="password" placeholder="Senha">
-        <button id="loginButton">Entrar</button>
-        <p id="error" style="color: red;"></p>
+        <div class="login-form">
+            <h2>Acesso ao Sistema</h2>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Senha" required>
+            </div>
+            <div class="button-group">
+                <button id="loginButton" class="primary-button">Entrar</button>
+                <button id="forgotPasswordButton" class="secondary-button">Esqueci minha senha</button>
+            </div>
+            <p id="error" class="error-message"></p>
+        </div>
+    </div>
+
+    <div id="forgotPasswordContainer" class="hidden">
+        <div class="forgot-password-form">
+            <h2>Recuperação de Senha</h2>
+            <p>Digite seu email para receber um link de redefinição de senha.</p>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="resetEmail" placeholder="Email" required>
+            </div>
+            <div class="button-group">
+                <button id="resetPasswordButton" class="primary-button">Enviar</button>
+                <button id="backToLoginButton" class="secondary-button">Voltar</button>
+            </div>
+            <p id="resetMessage" class="message"></p>
+        </div>
     </div>
 
     <div id="welcomeContainer">
         <iframe id="dashboardFrame" title="Painel Gerencial - Campneus Varejo" src="" allowFullScreen="true"></iframe>
-        <button id="logoutButton" class="hidden" onclick="logout()">Sair</button>
+        <button id="logoutButton" class="hidden logout-button" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
     </div>
 
-    <script src="script.js"></script>
-
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9b7BXNm8HijR-k-GZUJeCJn5gT0rKBbk",
+            authDomain: "campneus-dashboard.firebaseapp.com",
+            projectId: "campneus-dashboard",
+            storageBucket: "campneus-dashboard.firebasestorage.app",
+            messagingSenderId: "172203992376",
+            appId: "1:172203992376:web:91d4ddf048071f110d8dcd",
+            measurementId: "G-E6MZYD2YXG"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        
+        // Login function
+        window.login = function() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const errorElement = document.getElementById("error");
+            
+            errorElement.textContent = "";
+            
+            if (!email || !password) {
+                errorElement.textContent = "Por favor, preencha todos os campos.";
+                return;
+            }
+            
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Login bem-sucedido
+                    const user = userCredential.user;
+                    showDashboard();
+                })
+                .catch((error) => {
+                    // Tratamento de erros
+                    const errorCode = error.code;
+                    let errorMessage = "Erro ao fazer login. Tente novamente.";
+                    
+                    if (errorCode === 'auth/invalid-email') {
+                        errorMessage = "Email inválido.";
+                    } else if (errorCode === 'auth/user-disabled') {
+                        errorMessage = "Usuário desativado.";
+                    } else if (errorCode === 'auth/user-not-found') {
+                        errorMessage = "Usuário não encontrado.";
+                    } else if (errorCode === 'auth/wrong-password') {
+                        errorMessage = "Senha incorreta.";
+                    } else if (errorCode === 'auth/too-many-requests') {
+                        errorMessage = "Muitas tentativas. Tente novamente mais tarde.";
+                    }
+                    
+                    errorElement.textContent = errorMessage;
+                });
+        };
+        
+        // Show dashboard function
+        function showDashboard() {
+            document.getElementById("loginContainer").classList.add("hidden");
+            document.getElementById("forgotPasswordContainer").classList.add("hidden");
+            document.getElementById("welcomeContainer").style.display = "flex";
+            document.getElementById("logoutButton").classList.remove("hidden");
+            
+            const iframe = document.getElementById("dashboardFrame");
+            iframe.src = "https://v2-embednotion.com/1a860e206c8b80f6824ce1e1aceaa610";
+            iframe.style.display = "block";
+        }
+        
+        // Logout function
+        window.logout = function() {
+            signOut(auth).then(() => {
+                document.getElementById("loginContainer").classList.remove("hidden");
+                document.getElementById("welcomeContainer").classList.add("hidden");
+                
+                const iframe = document.getElementById("dashboardFrame");
+                iframe.src = "";
+                
+                document.getElementById("email").value = "";
+                document.getElementById("password").value = "";
+                document.getElementById("error").textContent = "";
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+            });
+        };
+        
+        // Password reset function
+        window.resetPassword = function() {
+            const email = document.getElementById("resetEmail").value.trim();
+            const messageElement = document.getElementById("resetMessage");
+            
+            messageElement.textContent = "";
+            messageElement.classList.remove("success");
+            messageElement.classList.remove("error");
+            
+            if (!email) {
+                messageElement.textContent = "Por favor, informe seu email.";
+                messageElement.classList.add("error");
+                return;
+            }
+            
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    messageElement.textContent = "Email de redefinição enviado. Verifique sua caixa de entrada.";
+                    messageElement.classList.add("success");
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    let errorMessage = "Erro ao enviar email de redefinição.";
+                    
+                    if (errorCode === 'auth/invalid-email') {
+                        errorMessage = "Email inválido.";
+                    } else if (errorCode === 'auth/user-not-found') {
+                        errorMessage = "Usuário não encontrado.";
+                    }
+                    
+                    messageElement.textContent = errorMessage;
+                    messageElement.classList.add("error");
+                });
+        };
+        
+        // Show forgot password form
+        window.showForgotPassword = function() {
+            document.getElementById("loginContainer").classList.add("hidden");
+            document.getElementById("forgotPasswordContainer").classList.remove("hidden");
+        };
+        
+        // Back to login
+        window.backToLogin = function() {
+            document.getElementById("forgotPasswordContainer").classList.add("hidden");
+            document.getElementById("loginContainer").classList.remove("hidden");
+            document.getElementById("resetEmail").value = "";
+            document.getElementById("resetMessage").textContent = "";
+        };
+        
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                showDashboard();
+            }
+        });
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("loginButton").addEventListener("click", login);
+            document.getElementById("forgotPasswordButton").addEventListener("click", showForgotPassword);
+            document.getElementById("resetPasswordButton").addEventListener("click", resetPassword);
+            document.getElementById("backToLoginButton").addEventListener("click", backToLogin);
+            
+            // Enter key event listeners
+            document.getElementById("password").addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    login();
+                }
+            });
+            
+            document.getElementById("resetEmail").addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    resetPassword();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
