@@ -31,7 +31,7 @@ function login() {
         document.getElementById("logoutButton").classList.remove("hidden");
 
         const iframe = document.getElementById("dashboardFrame");
-        iframe.src = "https://v2-embednotion.com/1a860e206c8b80f6824ce1e1aceaa610";
+        iframe.src = "https://9jo6qzz713pe9qm.embednotionpage.com/Campneus-1a860e206c8b80f6824ce1e1aceaa610";
         iframe.style.display = "block";
     } else {
         document.getElementById("error").textContent = "Usuário ou senha incorretos";
